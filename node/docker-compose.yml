@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+  main:
+    container_name: mongo-rest-docker-node-main
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/go/src/mongo-rest-docker-node
+    networks:
+      - mongo-rest-docker-node-net
+    depends_on:
+      - mongo-rs0-1
+  mongo-rs0-1:
+    image: "mongo-rs0-1"
+    build: ./docker/mongo-rs0-1
+    ports:
+      - "37017:27017"
+    volumes:
+      - mongodata1:/data/db
+    depends_on:
+      - "mongo-rs0-2"
+    networks:
+      - mongo-rest-docker-node-net
+  mongo-rs0-2:
+    image: "mongo-rs0-2"
+    build: ./docker/mongo-rs0-2
+    ports:
+      - "37018:27017"
+    volumes:
+      - mongodata2:/data/db
+    networks:
+      - mongo-rest-docker-node-net
+  mongo-setup:
+    image: "mongo-setup"
+    build: ./docker/mongo-setup
+    depends_on:
+      - "mongo-rs0-1"
+    networks:
+      - mongo-rest-docker-node-net
+  # jaeger:
+  #   image: jaegertracing/all-in-one:latest
+  #   ports:
+  #     - "6831:6831/udp"
+  #     - "16686:16686"
+  #   networks:
+  #     - physiotherapist-net
+volumes:
+  mongodata1: null
+  mongodata2: null
+networks:
+  mongo-rest-docker-node-net: null
