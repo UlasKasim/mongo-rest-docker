@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
 });
 
 //Update
-router.patch('/', async (req, res) => {
+router.put('/', async (req, res) => {
     try {
         const updateResult = await Event.updateOne({
             "_id": req.body._id
